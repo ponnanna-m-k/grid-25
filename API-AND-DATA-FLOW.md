@@ -1,8 +1,69 @@
-# API Calls and Data Binding in Grid 25
+# Vue.js Architecture, Data Flow, and API Calls in Grid 25
 
 This document explains how Grid 25 gets its data, when it makes network
 requests, and how Vue binds that data to the interface. The project is a Vue 3
 single-page application built with Vite.
+
+## Project architecture and startup
+
+Grid 25 is a **client-rendered single-page application (SPA)**. The browser
+downloads the page shell and JavaScript, then Vue builds and updates the
+application interface in the browser. There is no server-side rendering,
+hydration step, or Vue router in this project.
+
+The loading sequence is:
+
+1. [`index.html`](./index.html) supplies the HTML document shell, metadata,
+   favicon, font stylesheet, Tailwind CDN script, and an empty
+   `<div id="app"></div>` mount point. It loads `/src/main.js` as an ES module.
+2. Vite serves the source modules during development or bundles them for
+   production. The Vue plugin processes `.vue` Single-File Components.
+3. [`src/main.js`](./src/main.js) imports the global stylesheet and root
+   component, creates the Vue application with `createApp(App)`, and mounts
+   it onto `#app`.
+4. [`src/App.vue`](./src/App.vue) initializes the collection state and renders
+   the page's child components.
+5. Vue evaluates the templates and bindings, producing the visible page. When
+   reactive state later changes, Vue updates the affected interface.
+
+The main application files are organized as follows:
+
+```text
+index.html
+  └── src/main.js
+        ├── src/assets/main.css
+        └── src/App.vue
+              ├── src/components/SiteHeader.vue
+              ├── src/components/WelcomeBanner.vue
+              ├── src/components/CarCollection.vue
+              └── src/components/CarDetailModal.vue
+        └── src/data/cars.js (collection imported by App.vue)
+```
+
+[`vite.config.js`](./vite.config.js) registers `@vitejs/plugin-vue` and the
+Vue DevTools plugin, defines `@` as an alias for the `src` directory, and sets
+the base path to `/grid-25/` for deployment. The app's `package.json` defines
+`npm run dev` to start the development server, `npm run build` to make a
+production bundle, and `npm run preview` to serve that build locally.
+
+## Component responsibilities
+
+Vue components are reusable interface units. In this application, the root
+[`src/App.vue`](./src/App.vue) owns the shared state and coordinates four
+children:
+
+| Component | Responsibility |
+|---|---|
+| [`src/components/SiteHeader.vue`](./src/components/SiteHeader.vue) | Shows the Grid 25 brand and theme toggle. It receives the theme value as a prop and emits a toggle event. |
+| [`src/components/WelcomeBanner.vue`](./src/components/WelcomeBanner.vue) | Shows the featured car, collection statistics, and the action that selects the Hot Trucks series. |
+| [`src/components/CarCollection.vue`](./src/components/CarCollection.vue) | Shows search and series controls, the filtered car-card grid, result count, and empty state. It emits filter updates and car-selection events. |
+| [`src/components/CarDetailModal.vue`](./src/components/CarDetailModal.vue) | Shows the selected car's local information and can fetch optional external product details on demand. It owns the state for that request. |
+
+`App.vue` is the **state owner** for values used across sections: collection,
+theme, filters, and selected car. Child components receive the data they need
+and emit user actions back to the parent. The modal additionally owns
+component-local state such as whether fetched details are expanded and
+whether their request is idle, loading, or complete.
 
 ## 1. Where the data comes from
 
@@ -261,3 +322,67 @@ application. It has no API base URL configuration, shared request layer,
 server-side persistence, or user-specific data. The optional details request
 is made directly by the user's browser to the external URL stored on that
 car.
+
+## Styling and rendering
+
+[`src/assets/main.css`](./src/assets/main.css) provides the global styles,
+light-theme appearance, `.dark-theme` overrides, responsive layout rules,
+modal animations, and reduced-motion support. The root template binds the
+`dark-theme` class based on the reactive `darkTheme` value, so toggling the
+theme changes the class and the matching CSS rules take effect.
+
+The templates also use Tailwind utility classes for layout, spacing, borders,
+and responsive breakpoints. In this project, Tailwind is loaded through the
+CDN script in [`index.html`](./index.html); the custom site-specific rules are
+in `main.css`. The font is loaded from an external stylesheet. These resources
+are downloaded by the browser and are separate from Vue's component logic.
+
+When data changes, Vue updates the rendered DOM through its virtual DOM
+rendering process: it evaluates the component templates, compares the new
+render output with the previous output, and applies the necessary changes to
+the actual browser DOM. This is why changing a reactive ref updates the count
+or car list without manually finding and changing HTML elements.
+
+## Vue and web terminology
+
+- **Vite**: development server and production bundler. It serves project
+  modules while developing and produces deployable assets on build.
+- **Vue application instance**: the app created by `createApp(App)` and
+  attached to the mount point by `.mount('#app')`.
+- **Single-File Component (SFC)**: a `.vue` file that groups a component's
+  template and JavaScript logic. These components use `<script setup>`, Vue's
+  concise Composition API syntax for declaring component logic.
+- **Composition API**: Vue's APIs for organizing state and behavior. This
+  project uses `ref`, `computed`, `watch`, and lifecycle hooks such as
+  `onBeforeUnmount`.
+- **Reactive state**: values Vue tracks for changes and uses to update the
+  rendered interface.
+- **`ref`**: wraps a value in a reactive reference. In JavaScript access its
+  value through `.value`; templates automatically unwrap refs.
+- **Computed property**: a cached value derived from reactive state, such as
+  the filtered car list and collection counts.
+- **Prop**: input data a parent passes to a child component.
+- **Emitted event**: a notification a child sends to its parent to report an
+  action or updated input.
+- **Directive**: Vue-specific template syntax, including `v-if`, `v-for`,
+  `:attribute` (shorthand for `v-bind`), and `@event` (shorthand for
+  `v-on`).
+- **Virtual DOM**: Vue's in-memory representation of the interface, used to
+  determine which actual DOM changes are needed after an update.
+- **SPA**: single-page application. Here, filtering and opening a modal update
+  the current page rather than navigating to separate application pages.
+- **CORS**: browser-enforced cross-origin rules that determine whether
+  JavaScript running on this site can read a response from another domain.
+- **Lazy loading**: deferring a resource until it is closer to being needed;
+  the collection images use the browser's `loading="lazy"` behavior.
+
+## Project-specific behavior to note
+
+- The data includes Treasure Hunt filter state and filtering logic, but
+  [`src/components/SiteHeader.vue`](./src/components/SiteHeader.vue) currently
+  renders only the theme toggle; it does not render a Treasure Hunt toggle.
+- Car records include `imageSource`, but current components display `image`
+  and do not use `imageSource`.
+- Collection filtering is entirely local and synchronous. Only optional
+  descriptions in the detail modal require an explicit JavaScript network
+  request.
