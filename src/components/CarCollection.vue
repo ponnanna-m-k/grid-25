@@ -97,7 +97,7 @@ defineEmits([
           <div class="absolute right-3 top-3 flex flex-col items-end gap-1.5">
             <span
               v-if="car.isTreasureHunt"
-              class="rounded-md bg-gradient-to-r from-amber-500 to-orange-500 px-2.5 py-1 text-[11px] font-bold text-zinc-950 shadow-md"
+              class="rounded-md bg-gradient-to-r from-red-500 to-red-600 px-2.5 py-1 text-[11px] font-bold text-zinc-950 shadow-md"
             >
               🔥 {{ car.rarity }}
             </span>
@@ -118,16 +118,16 @@ defineEmits([
 
         <div class="car-details flex flex-1 flex-col justify-between p-5">
           <div>
-            <div class="mb-1 flex items-center justify-between font-mono text-xs text-orange-400">
+            <div class="mb-1 flex items-center justify-between font-mono text-xs text-red-400">
               <span>{{ car.year }} RELEASE</span>
               <span class="text-zinc-500">#{{ car.id }}</span>
             </div>
-            <h3 class="text-lg font-bold transition-colors group-hover:text-orange-400">{{ car.name }}</h3>
+            <h3 class="text-lg font-bold transition-colors group-hover:text-red-400">{{ car.name }}</h3>
             <p class="mt-1.5 text-xs">Color: {{ car.color }}</p>
           </div>
           <div class="mt-4 flex items-center justify-between border-t border-zinc-800/80 pt-3 text-xs">
             <span>{{ car.series }}</span>
-            <span class="text-orange-400">Inspect →</span>
+            <span class="text-red-400">Inspect →</span>
           </div>
         </div>
       </article>
@@ -135,7 +135,7 @@ defineEmits([
 
     <div v-else class="empty-state rounded-3xl border border-dashed py-20 text-center">
       <p>No cars found matching filters.</p>
-      <button class="mt-4 text-xs text-orange-400 underline" type="button" @click="$emit('reset-filters')">
+      <button class="mt-4 text-xs text-red-400 underline" type="button" @click="$emit('reset-filters')">
         Reset Filters
       </button>
     </div>

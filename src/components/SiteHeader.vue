@@ -20,7 +20,7 @@ defineEmits(['toggle-theme', 'toggle-treasure-hunts'])
         <img class="brand-mark h-10 w-10 object-contain" src="/grid25-logo.png" alt="" />
         <h1 class="flex items-center gap-2 text-lg font-bold tracking-tight">
           <span class="brand-name">GRID 25</span>
-          <span class="brand-scale rounded-full border border-orange-500/20 bg-orange-500/10 px-2 py-0.5 font-mono text-xs text-orange-400">1:64</span>
+          <span class="brand-scale rounded-full border border-red-500/20 bg-red-500/10 px-2 py-0.5 font-mono text-xs text-red-400">1:64</span>
         </h1>
       </div>
 

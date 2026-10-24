@@ -32,7 +32,7 @@ defineEmits(['close'])
       <img :src="car.image" :alt="car.name" class="car-modal-image aspect-video w-full object-contain p-6" />
       <div class="p-6">
         <div class="mb-2 flex gap-2">
-          <span class="rounded bg-orange-500/20 px-2 py-0.5 text-xs text-orange-400">{{ car.year }}</span>
+          <span class="rounded bg-red-500/20 px-2 py-0.5 text-xs text-red-400">{{ car.year }}</span>
           <span class="rounded bg-zinc-800 px-2 py-0.5 text-xs text-zinc-300">{{ car.rarity }}</span>
         </div>
         <h2 class="text-xl font-bold">{{ car.name }}</h2>
