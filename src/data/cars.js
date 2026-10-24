@@ -104,7 +104,7 @@ export const carsData = [
     rarity: "Mainline",
     isTreasureHunt: false,
     image: "https://burnsiediecast.com.au/cdn/shop/files/IMG_1403.png?v=1748353252&width=713",
-    imageSource: "https://burnsiediecast.com.au/products/hot-wheels-silver-series-toyota-1-5-10-toyota-tundra",
+    imageSource: "https://burnsiediecast.com.au/products/hot-wheels-themed-assortment-truck-set-8-8-10-toyota-tundra",
     notes: "Full-size crew cab off-road support pickup."
   },
   {
