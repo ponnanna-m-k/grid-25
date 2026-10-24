@@ -12,22 +12,29 @@ defineEmits(['close'])
 
 const detailsExpanded = ref(false)
 const detailsStatus = ref('idle')
-const productDetails = ref('')
+const productDescription = ref('')
+const detailsError = ref('')
 let requestController
 
 watch(() => props.car?.id, () => {
   requestController?.abort()
   detailsExpanded.value = false
   detailsStatus.value = 'idle'
-  productDetails.value = ''
+  productDescription.value = ''
+  detailsError.value = ''
 })
 
 onBeforeUnmount(() => requestController?.abort())
 
-function extractReaderDetails(readerResponse) {
-  const title = readerResponse.match(/^Title:\s*(.+)$/m)?.[1]?.trim()
-  const markdown = readerResponse.split('Markdown Content:')[1] || ''
-  const body = markdown
+function extractReaderDescription(readerResponse) {
+  const markdown = readerResponse.split(/Markdown Content:\s*/i)[1] || readerResponse
+  const description = markdown.match(
+    /(?:^|\n)\s*\[?Description\]?(?:\([^)]+\))?(?:\s+Details\s+Our Guarantee)?\s*\n+([\s\S]*?)(?=\n\s*(?:Company:|Brand:|Item Type:|Series:|Release Date:|UPC:|Stock #:|Our Guarantees? to You|Close×)\b|$)/i,
+  )?.[1]
+
+  if (!description) return ''
+
+  return description
     .split('\n')
     .map((line) => line
       .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
@@ -35,9 +42,9 @@ function extractReaderDetails(readerResponse) {
       .replace(/[`*_>#]/g, '')
       .trim())
     .filter((line) => line && !/^[-|]+$/.test(line))
-  const details = [...new Set([title, ...body])].filter(Boolean)
-
-  return details.join('\n').slice(0, 2000).trim()
+    .join('\n')
+    .slice(0, 2000)
+    .trim()
 }
 
 async function toggleProductDetails() {
@@ -59,10 +66,10 @@ async function toggleProductDetails() {
 
   requestController = new AbortController()
   detailsStatus.value = 'loading'
+  detailsError.value = ''
 
   try {
     const response = await fetch(props.car.detailsSourceUrl, {
-      headers: { Accept: 'application/json' },
       signal: requestController.signal,
     })
     if (response.status === 404) {
@@ -73,26 +80,24 @@ async function toggleProductDetails() {
       throw new Error(`Product request failed (${response.status})`)
     }
 
-    const contentType = response.headers.get('content-type') || ''
-    if (contentType.includes('json') || contentType.includes('javascript')) {
-      const product = await response.json()
-      const description = typeof product.description === 'string'
-        ? new DOMParser().parseFromString(product.description, 'text/html').body.textContent.replace(/\s+/g, ' ').trim()
-        : ''
-      const details = [
-        product.title,
-        product.vendor && `Brand: ${product.vendor}`,
-        product.type && `Series: ${product.type}`,
-        description && `Description: ${description}`,
-      ].filter(Boolean)
-      productDetails.value = details.join('\n')
-    } else {
-      productDetails.value = extractReaderDetails(await response.text())
+    const responseBody = await response.text()
+    let product
+    try {
+      product = JSON.parse(responseBody)
+    } catch {
+      product = null
     }
-    detailsStatus.value = productDetails.value ? 'loaded' : 'unavailable'
+
+    productDescription.value = product && typeof product === 'object'
+      ? typeof product.description === 'string'
+        ? new DOMParser().parseFromString(product.description, 'text/html').body.textContent?.replace(/\s+/g, ' ').trim() || ''
+        : ''
+      : extractReaderDescription(responseBody)
+    detailsStatus.value = productDescription.value ? 'loaded' : 'unavailable'
     detailsExpanded.value = detailsStatus.value === 'loaded'
   } catch (error) {
     if (error.name === 'AbortError') return
+    detailsError.value = error.message
     detailsStatus.value = 'error'
   }
 }
@@ -155,11 +160,21 @@ async function toggleProductDetails() {
         >
           {{ detailsStatus === 'loaded' && detailsExpanded ? 'See less' : detailsStatus === 'loading' ? 'Loading details…' : 'See more' }}
         </button>
-        <p v-if="detailsExpanded && detailsStatus === 'loaded'" class="car-modal-notes mt-3 whitespace-pre-line text-sm leading-relaxed">
-          {{ productDetails }}
+        <p v-if="detailsStatus === 'loading'" class="car-modal-notes mt-3 text-sm" role="status">
+          Fetching casting details…
         </p>
+        <div
+          v-if="detailsExpanded && detailsStatus === 'loaded'"
+          class="car-modal-fetched-details mt-3 whitespace-pre-line text-sm leading-relaxed"
+          role="region"
+          aria-label="Fetched casting details"
+          aria-live="polite"
+        >
+          <span class="car-modal-description-label">Description</span>
+          <p class="mt-2">{{ productDescription }}</p>
+        </div>
         <p v-if="detailsStatus === 'error'" class="car-modal-error mt-3 text-sm" role="status">
-          Could not load product details. Please try again.
+          Could not load product details: {{ detailsError }}
         </p>
         <p v-if="detailsStatus === 'unavailable'" class="car-modal-notes mt-3 text-sm" role="status">
           Additional details are not available for this source.
