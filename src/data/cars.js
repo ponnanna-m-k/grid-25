@@ -9,6 +9,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://tools.toywiz.com/_images/_webp/_products/lg/887961619867.webp",
     imageSource: "https://toywiz.com/hot-wheels-car-culture-shop-trucks-custom-62-chevy-pickup-die-cast-car/",
+    detailsSourceUrl: "https://r.jina.ai/https://toywiz.com/hot-wheels-car-culture-shop-trucks-custom-62-chevy-pickup-die-cast-car/",
     notes: "Cab-forward surf-board cruiser casting."
   },
   {
@@ -21,6 +22,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://cdn11.bigcommerce.com/s-0kvv9/images/stencil/1280x1280/products/332579/531320/hwex911gt3rs__71878.1611583467.jpg?c=2",
     imageSource: "https://toywiz.com/hot-wheels-hw-exotics-porsche-911-gt3-rs-diecast-car-410-short-card/",
+    detailsSourceUrl: "https://r.jina.ai/https://toywiz.com/hot-wheels-hw-exotics-porsche-911-gt3-rs-diecast-car-410-short-card/",
     notes: "992 generation track-focused aero wing."
   },
   {
@@ -33,6 +35,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://164custom.com/images/HW/8888/2025-Case-H-Hot-Wheels-96-Dodge-Viper-GTS-01.jpg",
     imageSource: "https://164custom.com/hotwheels/96-dodge-viper-gts/HYW50/blue.html",
+    detailsSourceUrl: "https://r.jina.ai/https://164custom.com/hotwheels/96-dodge-viper-gts/HYW50/blue.html",
     notes: "Classic double-bubble roofline and racing stripes."
   },
   {
@@ -45,6 +48,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://164custom.com/images/HW/7530/cadillac-project-GTP-Hypercar-2024-hot-wheels-case-M.jpg",
     imageSource: "https://164custom.com/hotwheels/cadillac-project-gtp-hypercar/HTD35/blue.html",
+    detailsSourceUrl: "https://r.jina.ai/https://164custom.com/hotwheels/cadillac-project-gtp-hypercar/HTD35/blue.html",
     notes: "V-Series.R endurance hybrid prototype."
   },
   {
@@ -57,6 +61,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://images.9ninecloth.com/2026/05/Hot-Wheels-Jimmy-Buffett-80th-Anniversary-1963-12-Ford-Falcon-Sprint-Convertible-WML1aBFLTu.jpg",
     imageSource: "https://9ninecloth.com/product/hot-wheels-jimmy-buffett-80th-anniversary-1963-1-2-ford-falcon-sprint-convertible-4832382/",
+    detailsSourceUrl: "https://r.jina.ai/https://9ninecloth.com/product/hot-wheels-jimmy-buffett-80th-Anniversary-1963-1-2-ford-falcon-sprint-convertible-4832382/",
     notes: "Vintage compact V8 drag and road racer."
   },
   {
@@ -69,6 +74,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://164custom.com/images/HW/7185/Shelby-Cobra-427-SC-hot-wheels-2024-Case-K.jpg",
     imageSource: "https://164custom.com/hotwheels/shelby-cobra-427-s-c/HTB53/zamac.html",
+    detailsSourceUrl: "https://r.jina.ai/https://164custom.com/hotwheels/shelby-cobra-427-s-c/HTB53/zamac.html",
     notes: "Side-pipe exhausts with classic roadster silhouette."
   },
   {
@@ -81,6 +87,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://juniordiecast.hu/img/95723/538823/538823.jpg",
     imageSource: "https://juniordiecast.hu/Hot-Wheels-17-Jeep-Wrangler",
+    detailsSourceUrl: "https://r.jina.ai/https://juniordiecast.hu/Hot-Wheels-17-Jeep-Wrangler",
     notes: "Trail-rated open-top 4x4 with oversized knobby tires."
   },
   {
@@ -93,6 +100,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://diecastsuperstore.co.uk/wp-content/uploads/2022/01/Hot-Wheels-21-Ford-Bronco-68_250-1_64.png",
     imageSource: "https://diecastsuperstore.co.uk/shop/vehicles/ford/hot-wheels-21-ford-bronco-68-250-164/",
+    detailsSourceUrl: "https://r.jina.ai/https://diecastsuperstore.co.uk/shop/vehicles/ford/hot-wheels-21-ford-bronco-68-250-164/",
     notes: "Sixth-generation 2-door trail rig."
   },
   {
@@ -105,6 +113,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://burnsiediecast.com.au/cdn/shop/files/IMG_1403.png?v=1748353252&width=713",
     imageSource: "https://burnsiediecast.com.au/products/hot-wheels-themed-assortment-truck-set-8-8-10-toyota-tundra",
+    detailsSourceUrl: "https://burnsiediecast.com.au/products/hot-wheels-themed-assortment-truck-set-8-8-10-toyota-tundra.js",
     notes: "Full-size crew cab off-road support pickup."
   },
   {
@@ -117,6 +126,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://tools.toywiz.com/_images/_webp/_products/lg/756995967698.webp",
     imageSource: "https://toywiz.com/hot-wheels-hw-hot-trucks-20-toyota-tacoma-diecast-car-410/",
+    detailsSourceUrl: "https://r.jina.ai/https://toywiz.com/hot-wheels-hw-hot-trucks-20-toyota-tacoma-diecast-car-410/",
     notes: "TRD Pro overland spec with roof rack and bed accessories."
   },
   {
@@ -129,6 +139,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://jaqjnr.com.au/cdn/shop/files/34BC6090-DD12-4547-994E-FF8A8183E4A4.jpg?v=1730553238",
     imageSource: "https://jaqjnr.com.au/products/mattel-hot-wheels-diecast-basic-1-64-2020-ram-1500-rebel-hw-hot-trucks",
+    detailsSourceUrl: "https://jaqjnr.com.au/products/mattel-hot-wheels-diecast-basic-1-64-2020-ram-1500-rebel-hw-hot-trucks.js",
     notes: "Aggressive Rebel front grille with blacked-out wheel arches."
   },
   {
@@ -141,6 +152,7 @@ export const carsData = [
     isTreasureHunt: false,
     image: "https://99diecast.com/cdn/shop/files/HW-FYD31_front_1200x1200.jpg?v=1747852770",
     imageSource: "https://99diecast.com/products/hot-wheels-dune-a-soar-mainline-2019-20-250",
+    detailsSourceUrl: "https://99diecast.com/products/hot-wheels-dune-a-soar-mainline-2019-20-250.js",
     notes: "Original Mattel off-road buggy casting with pterodactyl fin profile."
   }
 ];

@@ -24,23 +24,34 @@ watch(() => props.car?.id, () => {
 
 onBeforeUnmount(() => requestController?.abort())
 
+function extractReaderDetails(readerResponse) {
+  const title = readerResponse.match(/^Title:\s*(.+)$/m)?.[1]?.trim()
+  const markdown = readerResponse.split('Markdown Content:')[1] || ''
+  const body = markdown
+    .split('\n')
+    .map((line) => line
+      .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+      .replace(/[`*_>#]/g, '')
+      .trim())
+    .filter((line) => line && !/^[-|]+$/.test(line))
+  const details = [...new Set([title, ...body])].filter(Boolean)
+
+  return details.join('\n').slice(0, 2000).trim()
+}
+
 async function toggleProductDetails() {
   if (detailsStatus.value === 'loaded') {
     detailsExpanded.value = !detailsExpanded.value
     return
   }
 
-  if (detailsStatus.value === 'loading' || !props.car?.imageSource) return
+  if (detailsStatus.value === 'loading' || !props.car?.detailsSourceUrl) return
 
-  let productApiUrl
   try {
-    const sourceUrl = new URL(props.car.imageSource)
-    if (!sourceUrl.pathname.includes('/products/')) {
-      detailsStatus.value = 'unavailable'
-      return
+    if (!['http:', 'https:'].includes(new URL(props.car.detailsSourceUrl).protocol)) {
+      throw new TypeError('Product details URL must use HTTP or HTTPS')
     }
-    sourceUrl.pathname = `${sourceUrl.pathname.replace(/\/$/, '')}.js`
-    productApiUrl = sourceUrl
   } catch {
     detailsStatus.value = 'error'
     return
@@ -50,7 +61,7 @@ async function toggleProductDetails() {
   detailsStatus.value = 'loading'
 
   try {
-    const response = await fetch(productApiUrl, {
+    const response = await fetch(props.car.detailsSourceUrl, {
       headers: { Accept: 'application/json' },
       signal: requestController.signal,
     })
@@ -62,17 +73,22 @@ async function toggleProductDetails() {
       throw new Error(`Product request failed (${response.status})`)
     }
 
-    const product = await response.json()
-    const description = typeof product.description === 'string'
-      ? new DOMParser().parseFromString(product.description, 'text/html').body.textContent.replace(/\s+/g, ' ').trim()
-      : ''
-    const details = [
-      product.title,
-      product.vendor && `Brand: ${product.vendor}`,
-      product.type && `Series: ${product.type}`,
-      description && `Description: ${description}`,
-    ].filter(Boolean)
-    productDetails.value = details.join('\n')
+    const contentType = response.headers.get('content-type') || ''
+    if (contentType.includes('json') || contentType.includes('javascript')) {
+      const product = await response.json()
+      const description = typeof product.description === 'string'
+        ? new DOMParser().parseFromString(product.description, 'text/html').body.textContent.replace(/\s+/g, ' ').trim()
+        : ''
+      const details = [
+        product.title,
+        product.vendor && `Brand: ${product.vendor}`,
+        product.type && `Series: ${product.type}`,
+        description && `Description: ${description}`,
+      ].filter(Boolean)
+      productDetails.value = details.join('\n')
+    } else {
+      productDetails.value = extractReaderDetails(await response.text())
+    }
     detailsStatus.value = productDetails.value ? 'loaded' : 'unavailable'
     detailsExpanded.value = detailsStatus.value === 'loaded'
   } catch (error) {
@@ -131,7 +147,7 @@ async function toggleProductDetails() {
           </div>
         </div>
         <button
-          v-if="car.imageSource"
+          v-if="car.detailsSourceUrl"
           class="car-modal-source mt-6 inline-flex items-center gap-2 text-sm font-semibold transition-colors disabled:cursor-wait disabled:opacity-60"
           type="button"
           :disabled="detailsStatus === 'loading'"
